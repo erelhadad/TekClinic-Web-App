@@ -19,6 +19,8 @@ import { type Session } from 'next-auth'
 /** Task query parameters. */
 interface TaskParams extends PaginationParams {
   search?: string
+  patient_id?: number
+  complete?: boolean
 }
 
 export class Task {
