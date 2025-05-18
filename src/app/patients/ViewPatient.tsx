@@ -21,6 +21,7 @@ import { Task } from '@/src/api/model/task'
 import PhoneNumber from '@/src/components/PhoneNumber'
 import Languages from '@/src/components/Languages'
 import AppointmentSchedule from '@/src/components/AppointmentSchedule'
+import TaskSchedule from '@/src/components/TaskSchedule'
 
 
 async function loadPatientAppointments(
@@ -182,9 +183,14 @@ const ViewPatient: React.FC<ViewPatientProps> = ({
 
     <Divider my="sm" />
 
+   {/* Tasks go first */}
+    <TaskSchedule patient_id={patient.id} />
+    <Divider my="sm" />
+
+    {/* Then appointments */}
     <AppointmentSchedule
-        patient_id={patient.id}
-        hidePatient
+      patient_id={patient.id}
+      hidePatient
     />
   </Box>
 )
