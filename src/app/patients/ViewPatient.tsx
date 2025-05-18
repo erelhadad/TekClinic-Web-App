@@ -20,6 +20,8 @@ import { Appointment } from '@/src/api/model/appointment'
 import { Task } from '@/src/api/model/task'
 import PhoneNumber from '@/src/components/PhoneNumber'
 import Languages from '@/src/components/Languages'
+import AppointmentSchedule from '@/src/components/AppointmentSchedule'
+
 
 async function loadPatientAppointments(
   patientId: number,
@@ -68,155 +70,25 @@ const ViewAppointment: React.FC<{ appointment: Appointment; session: Session }> 
 
   const { start_time: startTime, end_time: endTime } = appointment
 
-  return (
-    <Paper
-      shadow="md"
-      mb="xs"
-      bg="green"
-      w="100%"
-      display="inline-block"
-      pl="xs"
-      pr="xs"
-      c="black"
-    >
-      <Group>
-        <AppointmentDate date={startTime} /> <AppointmentTime date={startTime} />-
-        <AppointmentTime date={endTime} />:
-        <Text m="auto">
-          {doctorName ?? (error ? 'Could not load doctor' : 'Loading name...')}
-        </Text>
-      </Group>
-    </Paper>
-  )
-}
-
-const ViewPatientTasks: React.FC<{ patientId: number; session: Session }> = ({
-  patientId,
-  session,
-}) => {
-  const [tasks, setTasks] = React.useState<Task[] | null>(null)
-  const [error, setError] = React.useState(false)
-
-  React.useEffect(() => {
-    loadPatientTasks(patientId, session)
-      .then((tasks) => setTasks(tasks))
-      .catch(() => setError(true))
-  }, [patientId, session])
-
-  // Mock data for demonstration
-  React.useEffect(() => {
-    const mockTasks: Task[] = [
-      new Task({
-        id: 1,
-        title: 'Mock Title 1',
-        description: 'Mock Task 1',
-        complete: false,
-        created_at: new Date().toISOString(),
-        patient_id: patientId,
-        expertise: 'General',
-      }),
-      new Task({
-        id: 2,
-        title: 'Mock Title 2',
-        description: 'Mock Task 2',
-        complete: true,
-        created_at: new Date().toISOString(),
-        patient_id: patientId,
-        expertise: 'Specialist',
-      }),
-    ]
-    setTasks(mockTasks)
-  }, [patientId])
-
-  if (tasks === null) return <Text>Loading tasks...</Text>
-  if (error) return <Text>Error loading tasks.</Text>
-
-  return (
-    <Box mt="md">
-      {/* Section header with underline */}
-      <Title
-        order={5}
-        mb="md"
-        style={{
-          borderBottom: '2px solid rgba(0, 0, 0, 0.1)',
-          paddingBottom: '0.25rem',
-        }}
-      >
-        Tasks
-      </Title>
-
-      <Stack>
-        {tasks.map((task) => (
-          <Paper key={task.id} mb="xs" shadow="xs" p="md" withBorder>
-            <Group position="apart" align="flex-start" mb="xs">
-              {/* Task title */}
-              <Text
-                style={{ fontSize: '1.125rem', fontWeight: 500 }}
-              >
-                {task.title}
-              </Text>
-
-              {/* Status badge */}
-              <Badge color={task.complete ? 'green' : 'gray'}>
-                {task.complete ? 'Complete' : 'Incomplete'}
-              </Badge>
-            </Group>
-
-            {task.description && (
-              <Text
-                style={{
-                  color: 'rgba(0, 0, 0, 0.6)',
-                  fontSize: '0.875rem',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                {task.description}
-              </Text>
-            )}
-
-            <Divider />
-          </Paper>
-        ))}
-      </Stack>
-    </Box>
-  )
-}
-
-const ViewPatientAppointments: React.FC<{ patientId: number; session: Session }> = ({
-  patientId,
-  session,
-}) => {
-  const [appointments, setAppointments] = React.useState<Appointment[] | null>(
-    null
-  )
-  const [error, setError] = React.useState(false)
-
-  React.useEffect(() => {
-    loadPatientAppointments(patientId, session)
-      .then((apps) => setAppointments(apps))
-      .catch((err) => {
-        console.error('Error for id:', patientId, err)
-        setError(true)
-      })
-  }, [patientId, session])
-
-  if (appointments === null) return <Text>Loading appointments...</Text>
-  if (error) return <Text>Error loading appointments.</Text>
-
-  return (
-    <Box>
-      <Text>
-        <strong>Appointments:</strong>
+  // Paper is like a div with a shadow and a border.
+  // TODO: What if the end_timee is on a different day?
+  return <Paper
+    shadow="md"
+    mb="xs"
+    bg="green"
+    w="100%"
+    display="inline-block"
+    pl="xs"
+    pr="xs"
+    c="black"
+  >
+    <Group>
+      <AppointmentDate date={startTime} /> <AppointmentTime date={startTime} />-<AppointmentTime date={endTime} />:
+      <Text m="auto">
+        {doctorName ?? (error ? 'Could not load doctor' : 'Loading name...')}
       </Text>
-      {appointments.map((appointment) => (
-        <ViewAppointment
-          key={appointment.id}
-          appointment={appointment}
-          session={session}
-        />
-      ))}
-    </Box>
-  )
+    </Group>
+  </Paper>
 }
 
 interface ViewPatientProps {
@@ -310,12 +182,10 @@ const ViewPatient: React.FC<ViewPatientProps> = ({
 
     <Divider my="sm" />
 
-    <ViewPatientAppointments patientId={patient.id} session={session} />
-
-    <Box>
-      <Divider my="sm" />
-      <ViewPatientTasks patientId={patient.id} session={session} />
-    </Box>
+    <AppointmentSchedule
+        patient_id={patient.id}
+        hidePatient
+    />
   </Box>
 )
 
