@@ -123,6 +123,10 @@ const ViewPatient: React.FC<ViewPatientProps> = ({
             <strong>Name:</strong> {patient.name}
           </Text>
           <Text>
+            <strong>Clinic - ID:</strong> {patient.id}
+          </Text>
+
+          <Text>
             <strong>Age:</strong> {patient.age}
           </Text>
           <Text>

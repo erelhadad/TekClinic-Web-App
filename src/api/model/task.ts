@@ -74,7 +74,11 @@ export class Task {
   }
 
   static getByPatientId = async (patientId: number, session: Session): Promise<Task[]> => {
-    const formattedParams = formatPaginationParams({ patient_id: patientId } as TaskParams);
+    const formattedParams = {
+    patient_id: patientId.toString(),
+    skip: '0',
+    limit: '50',
+    };
     console.log('Fetching tasks for patient ID:', patientId); // Debugging
     const { items: tasks } = await getAPIResourceList(Task, formattedParams, session);
     return tasks;
