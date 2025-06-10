@@ -125,7 +125,12 @@ const ViewPatient: React.FC<ViewPatientProps> = ({
           <Text>
             <strong>Clinic-ID:</strong> {patient.id}
           </Text>
-
+          {patient.personal_id !== undefined && (
+            <Text>
+              <strong> ID :</strong> {patient.personal_id.id}
+            </Text>
+          )}
+        
           <Text>
             <strong>Age:</strong> {patient.age}
           </Text>
