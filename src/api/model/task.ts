@@ -11,11 +11,14 @@ import {
   getAPIResource,
   getAPIResourceList,
   putAPIResource,
+  apiGET,                 // add this
   type PaginationParams,
   type PaginationResult
 } from '@/src/api/common'
 import { type Session } from 'next-auth'
 import { assert } from '@/src/utils/error'
+import { requireBuildEnv } from '@/src/utils/env'
+import { wrapError } from '@/src/api/error'
 
 /** Task query parameters. */
 interface TaskParams extends PaginationParams {
@@ -73,23 +76,29 @@ export class Task {
     return await createAPIResource<TaskBaseScheme>(Task, props, session)
   }
 
+  /**
+   * Fetch all tasks for a given patient in one call.
+   * This hits GET /tasks/by-patient?patient_id=… and returns TaskScheme[]
+   * mapping it to Task instances.
+   */
   static getByPatientId = async (patientId: number, session: Session): Promise<Task[]> => {
-    const formattedParams = {
-    patient_id: patientId.toString(),
-    skip: '0',
-    limit: '50',
-    };
-    console.log('Fetching tasks for patient ID:', patientId); // Debugging
-    const { items: tasks } = await getAPIResourceList(Task, formattedParams, session);
-    return tasks;
-  };
+    const API_URL = requireBuildEnv('NEXT_PUBLIC_API_URL', process.env.NEXT_PUBLIC_API_URL)
+    const url = `${API_URL}/tasks/by-patient?patient_id=${patientId}`
+    try {
+      const schemes = await apiGET<TaskScheme[]>(url, session)
+      return schemes.map(Task.fromScheme)
+    } catch (err) {
+      throw wrapError(err)
+    }
+  }
 
   update = async (session: Session): Promise<void> => {
     const data: TaskUpdateScheme = {
       patient_id: this.patient_id,
       expertise: this.expertise,
       title: this.title,
-      description: this.description
+      description: this.description,
+      complete: this.complete
     }
     await putAPIResource<IdHolder, TaskUpdateScheme>(Task, this.id, data, session)
   }

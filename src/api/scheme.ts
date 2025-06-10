@@ -108,7 +108,7 @@ export interface TaskScheme extends TaskBaseScheme {
 }
 
 export interface TaskUpdateScheme extends TaskBaseScheme {
-  // TODO:
+  complete: boolean
 }
 
 export interface IdHolder {

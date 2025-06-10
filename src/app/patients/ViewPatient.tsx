@@ -35,13 +35,13 @@ async function loadPatientAppointments(
   return appointments
 }
 
-async function loadPatientTasks(
-  patientId: number,
-  session: Session
-): Promise<Task[]> {
-  const response = await Task.getByPatientId(patientId, session)
-  return response
-}
+// async function loadPatientTasks(
+//   patientId: number,
+//   session: Session
+// ): Promise<Task[]> {
+//   const response = await Task.getByPatientId(patientId, session)
+//   return response
+// }
 
 function padTwoDigits(num: number): string {
   return num.toString().padStart(2, '0')
@@ -122,10 +122,6 @@ const ViewPatient: React.FC<ViewPatientProps> = ({
           <Text>
             <strong>Name:</strong> {patient.name}
           </Text>
-          <Text>
-            <strong>Clinic - ID:</strong> {patient.id}
-          </Text>
-
           <Text>
             <strong>Age:</strong> {patient.age}
           </Text>
